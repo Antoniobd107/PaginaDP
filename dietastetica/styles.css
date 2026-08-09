@@ -403,6 +403,16 @@ em { font-style: italic; color: var(--sage); }
 .treat-card:hover .treat-card-media img { transform: scale(1.09); }
 .treat-card-media.is-icon { display: grid; place-items: center; background: linear-gradient(155deg, var(--sage-mist), var(--cream-2)); }
 .treat-card-media.is-icon svg { width: 46px; height: 46px; color: var(--sage); }
+.treat-card-media.is-video { background: var(--sage-deep); }
+.treat-card-media video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .9s var(--ease-soft);
+}
+.treat-card:hover .treat-card-media video { transform: scale(1.05); }
+.treat-card-media.is-video::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, rgba(30,27,20,.28), transparent 55%);
+}
 .treat-card-body { padding: 1.35rem 1.4rem 1.5rem; display: flex; flex-direction: column; gap: .55rem; flex: 1; }
 .treat-card-body h3 { font-family: var(--sans); font-size: 1.02rem; font-weight: 600; color: var(--ink); }
 .treat-card-body p { font-size: .87rem; color: var(--ink-mute); line-height: 1.55; flex: 1; }

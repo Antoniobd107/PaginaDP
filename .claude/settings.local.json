@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(command -v identify)",
+      "Bash(command -v magick)",
+      "Bash(echo \"=== hero-bg images per page ===\")",
+      "Bash(grep -oE '<div class=\"hero-bg\"><img src=\"[^\"]+\"' C:/Users/anton/Desktop/PaginaDS/dietastetica/*.html)",
+      "Bash(echo \"=== preload images per page ===\")",
+      "Bash(grep -oE '<link rel=\"preload\" as=\"image\" href=\"[^\"]+\"' C:/Users/anton/Desktop/PaginaDS/dietastetica/*.html)",
+      "Bash(echo \"=== full 2-path version occurrences ===\")",
+      "Bash(grep -c 'M8.3 8.7c.2-.6.7-.6' C:/Users/anton/Desktop/PaginaDS/dietastetica/*.html)",
+      "Bash(echo \"=== single-path bubble occurrences ===\")",
+      "Bash(grep -c 'M20.5 3.5a10 10 0 0 0-16.9 10.4L2 21l7.3-1.5A10 10 0 1 0 20.5 3.5Z\"/></svg>' C:/Users/anton/Desktop/PaginaDS/dietastetica/*.html)",
+      "Bash(find \"C:/Users/anton/AppData/Local/Temp\" -newermt \"-15 minutes\" -iname \"*.png\" -o -newermt \"-15 minutes\" -iname \"*.jpg\" -o -newermt \"-15 minutes\" -iname \"*.jpeg\" 2>/dev/null | head -50)",
+      "Bash(echo \"=== scratchpad ===\" *)"
+    ]
+  }
+}

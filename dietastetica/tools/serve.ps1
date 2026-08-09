@@ -21,6 +21,10 @@ $mime = @{
   ".svg"  = "image/svg+xml"
   ".webp" = "image/webp"
   ".ico"  = "image/x-icon"
+  ".mp4"  = "video/mp4"
+  ".webm" = "video/webm"
+  ".woff" = "font/woff"
+  ".woff2" = "font/woff2"
 }
 
 while ($listener.IsListening) {

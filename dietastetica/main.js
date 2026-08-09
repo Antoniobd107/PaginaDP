@@ -237,6 +237,37 @@
   }
 
   /* ---------------------------------------------------------
+     Ambient videos — pause under reduced-motion, and only
+     play while actually on screen (saves battery on mobile)
+  --------------------------------------------------------- */
+  function initAmbientVideo() {
+    var vids = $$("[data-ambient-video]");
+    if (!vids.length) return;
+
+    if (reduced) {
+      vids.forEach(function (v) {
+        v.removeAttribute("autoplay");
+        v.pause();
+      });
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var v = entry.target;
+        if (entry.isIntersecting) {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        } else {
+          v.pause();
+        }
+      });
+    }, { threshold: 0.05 });
+    vids.forEach(function (v) { io.observe(v); });
+  }
+
+  /* ---------------------------------------------------------
      Hero parallax (GSAP, gated by feature detection)
   --------------------------------------------------------- */
   function initHeroParallax() {
@@ -275,6 +306,7 @@
     safe(initReveals, "initReveals");
     safe(initTilt, "initTilt");
     safe(initMagnetic, "initMagnetic");
+    safe(initAmbientVideo, "initAmbientVideo");
 
     if (window.gsap && window.ScrollTrigger) {
       try { gsap.registerPlugin(ScrollTrigger); } catch (e) {}
