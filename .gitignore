@@ -14,3 +14,5 @@ $RECYCLE.BIN/
 # Temporales
 *.tmp
 *.log
+.vercel
+.env*
