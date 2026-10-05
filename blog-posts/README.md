@@ -25,7 +25,10 @@ author: Equipo DietaStética
 
 | Campo | Obligatorio | Notas |
 |---|---|---|
-| `title` | Sí | Título del artículo (incluye la palabra clave y, si encaja, "Badajoz"). |
+| `title` | Sí | Título visible del artículo (H1). Incluye la palabra clave y, si encaja, "Badajoz". |
+| `seoTitle` | No | Título para Google (`<title>`, máx. 60 caracteres). Si no se pone, se usa `title` + "· Blog DietaStética Badajoz". |
+| `whatsapp` | No | Mensaje prerrellenado del botón final "Reservar por WhatsApp" (p. ej. `Hola, me gustaría información sobre la depilación láser.`). |
+| `review` | No | Frase que invita a dejar reseña. Se muestra con el botón "Dejar mi opinión en Google" cuando `REVIEWS_URL` está rellenado en `build-blog.mjs`. |
 | `slug` | No | Dirección de la página: `blog/<slug>.html`. Si no se pone, se crea a partir del título. **No lo cambies una vez publicado.** |
 | `date` | Sí | Fecha de publicación, formato `AAAA-MM-DD`. |
 | `updated` | No | Fecha de la última actualización importante. |
@@ -46,6 +49,9 @@ author: Equipo DietaStética
   Enlazar a `tratamientos.html` o a otros artículos (`blog/otro-slug.html`) ayuda al SEO.
 - Imágenes: `![Descripción de la foto](nombre-foto.jpg)` (la foto en `dietastetica/assets/img/`).
 - Citas: `> Texto destacado`.
+- El primer párrafo se muestra destacado como entradilla.
+- Preguntas frecuentes: una sección `## Preguntas frecuentes` con cada pregunta como `### ¿Pregunta?`
+  y la respuesta debajo. Se genera automáticamente el marcado FAQ para Google.
 
 ## 3. Genera y publica
 

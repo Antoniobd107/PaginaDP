@@ -16,6 +16,9 @@ import { fileURLToPath } from "node:url";
 
 // Cambia esto cuando la web tenga su dominio definitivo.
 const SITE_URL = "https://dietastetica.vercel.app";
+// Enlace corto de reseñas del Perfil de Empresa de Google ("Pedir reseñas").
+// Mientras esté vacío, el bloque de reseñas no se muestra en los artículos.
+const REVIEWS_URL = "https://g.page/r/CfdiOE7opm6LEBM/review";
 const ASSET_VERSION = "20261005";
 
 const SITE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -87,7 +90,11 @@ function parseFrontMatter(raw, file) {
 }
 
 function inline(text, prefix) {
-  const fixHref = (u) => /^(https?:|mailto:|tel:|#|\/)/.test(u) ? u : prefix + u;
+  // Los enlaces absolutos a la propia web se vuelven relativos (sobreviven a un cambio de dominio).
+  const fixHref = (u) => {
+    if (u.startsWith(SITE_URL + "/")) u = u.slice(SITE_URL.length + 1) || "index.html";
+    return /^(https?:|mailto:|tel:|#|\/)/.test(u) ? u : prefix + u;
+  };
   return esc(text)
     .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) =>
       `<img src="${imgUrl(src, prefix)}" alt="${alt}" loading="lazy" decoding="async">`)
@@ -141,6 +148,17 @@ function markdown(src, prefix) {
   return out.join("\n");
 }
 
+// "## Preguntas frecuentes" seguido de "### Pregunta" + respuesta → datos FAQPage.
+function extractFaq(body) {
+  const sec = body.replace(/\r\n/g, "\n").match(/^##\s+Preguntas frecuentes\s*\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m);
+  if (!sec) return [];
+  const plain = (t) => t.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/\*+/g, "").replace(/\s+/g, " ").trim();
+  return sec[1].split(/^###\s+/m).slice(1).map((chunk) => {
+    const [q, ...rest] = chunk.split("\n");
+    return [plain(q), plain(rest.join(" "))];
+  }).filter(([q, a]) => q && a);
+}
+
 // -----------------------------------------------------------------------------
 // Carga de artículos
 // -----------------------------------------------------------------------------
@@ -158,6 +176,9 @@ function loadPosts() {
       return {
         file,
         title: data.title,
+        seoTitle: data.seoTitle || "",
+        whatsapp: data.whatsapp || "",
+        review: data.review || "",
         slug: slugify(data.slug || data.title),
         date: data.date,
         updated: data.updated || data.date,
@@ -177,6 +198,9 @@ function loadPosts() {
 
   const seen = new Set();
   for (const p of posts) {
+    if (p.seoTitle.length > 60) console.warn(`Aviso: ${p.file}: seoTitle tiene ${p.seoTitle.length} caracteres (máx. recomendado 60)`);
+    if (p.description.length > 160) console.warn(`Aviso: ${p.file}: description tiene ${p.description.length} caracteres (máx. recomendado 160)`);
+    if (p.review && !REVIEWS_URL) console.warn(`Aviso: ${p.file}: falta REVIEWS_URL en build-blog.mjs; no se muestra el bloque de reseñas`);
     if (seen.has(p.slug)) throw new Error(`Hay dos artículos con el mismo slug: "${p.slug}"`);
     seen.add(p.slug);
   }
@@ -259,7 +283,8 @@ ${links.map(([id, href, label]) => `      <a class="nav-link" data-page-link="${
 `;
 }
 
-function ctaBand(p) {
+function ctaBand(p, waMsg = WA_MSG) {
+  const waHref = "https://wa.me/34609565252?text=" + encodeURIComponent(waMsg);
   return `
   <section class="section" style="padding-top:0;">
     <div class="container">
@@ -268,7 +293,7 @@ function ctaBand(p) {
         <h2>¿Te asesoramos en persona?</h2>
         <p>Cuéntanos qué te gustaría mejorar y te proponemos el plan que mejor encaja contigo, sin compromiso. Edificio Eurodom, Badajoz.</p>
         <div class="hero-actions">
-          <a class="btn btn-rose" data-magnetic data-magnetic-strength="0.25" data-wa="${WA_MSG}" href="${WA_HREF}">Reservar por WhatsApp</a>
+          <a class="btn btn-rose" data-magnetic data-magnetic-strength="0.25" data-wa="${esc(waMsg)}" href="${waHref}">Reservar por WhatsApp</a>
           <a class="btn btn-ghost" href="${p}tratamientos.html">Ver tratamientos</a>
         </div>
       </div>
@@ -373,6 +398,14 @@ function renderPost(post, posts) {
       ]
     }
   ];
+  const faq = extractFaq(post.body);
+  if (faq.length) {
+    ld.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } }))
+    });
+  }
 
   const extra = `<meta property="article:published_time" content="${post.date}">
 <meta property="article:modified_time" content="${post.updated}">
@@ -381,7 +414,7 @@ ${jsonLd(ld)}
 `;
 
   return head({
-    p, title: `${post.title} · Blog DietaStética Badajoz`, description: post.description,
+    p, title: post.seoTitle || `${post.title} · Blog DietaStética Badajoz`, description: post.description,
     canonical: url, ogType: "article", ogImage: absImg(post.image), preload: imgUrl(post.image, p), extra
   }) + header(p) + `
 <main id="main">
@@ -406,9 +439,12 @@ ${jsonLd(ld)}
   <section class="section">
     <div class="container">
       <article class="post-body" data-reveal>
-        <p class="post-lede">${esc(post.description)}</p>
 ${markdown(post.body, p)}
-      </article>
+${REVIEWS_URL && post.review ? `        <aside class="post-review">
+          <p>${inline(post.review, p)}</p>
+          <a class="btn btn-ghost" href="${REVIEWS_URL}" target="_blank" rel="noopener">Dejar mi opinión en Google</a>
+        </aside>
+` : ""}      </article>
     </div>
   </section>
 ${related.length ? `
@@ -423,7 +459,7 @@ ${related.map((r) => postCard(r, p)).join("\n")}
       </div>
     </div>
   </section>
-` : ""}${ctaBand(p)}
+` : ""}${ctaBand(p, post.whatsapp || WA_MSG)}
 </main>
 ` + footer(p);
 }
