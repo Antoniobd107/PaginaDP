@@ -621,3 +621,81 @@ em { font-style: italic; color: var(--sage); }
 ::view-transition-new(root) { animation-name: fadeInUp; }
 @keyframes fadeOutUp { to { opacity: 0; transform: translateY(-10px); } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } }
+
+/* =============================================================
+   20. Blog (blog.html + blog/*.html — generado por tools/build-blog.mjs)
+   ============================================================= */
+.blog-filters { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 2.2rem; }
+.chip {
+  font-size: .82rem; font-weight: 600; letter-spacing: .02em;
+  padding: .55rem 1.1rem; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft);
+  transition: background .35s var(--ease-soft), color .35s, border-color .35s;
+}
+.chip:hover { border-color: var(--sage-light); color: var(--sage-deep); }
+.chip.is-active { background: var(--sage); border-color: var(--sage); color: var(--cream); }
+
+.post-card[hidden] { display: none; }
+.post-card .treat-card-media { display: block; }
+.post-card-meta {
+  display: flex; flex-wrap: wrap; gap: .3rem .9rem; align-items: center;
+  font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rose-deep);
+}
+.post-card-meta time { color: var(--ink-mute); letter-spacing: .04em; text-transform: none; font-weight: 500; }
+.post-card .treat-card-body h2,
+.post-card .treat-card-body h3 {
+  font-family: var(--serif); font-size: 1.45rem; font-weight: 500; line-height: 1.15; color: var(--ink);
+}
+.post-card .treat-card-body h2 a,
+.post-card .treat-card-body h3 a { transition: color .3s; }
+.post-card:hover .treat-card-body h2 a,
+.post-card:hover .treat-card-body h3 a { color: var(--sage); }
+
+.text-link { color: var(--sage-deep); font-weight: 600; border-bottom: 1px solid var(--rose); transition: color .3s; }
+.text-link:hover { color: var(--sage); }
+
+/* Article hero */
+.hero-post .hero-title { max-width: 22ch; font-size: clamp(2rem, 4.4vw, 3.3rem); }
+.hero-post .post-meta { margin-top: 1.8rem; }
+.breadcrumbs {
+  display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.4rem;
+  font-size: .8rem; color: rgba(247,243,236,0.7);
+}
+.breadcrumbs a { transition: color .3s; }
+.breadcrumbs a:hover { color: var(--paper); }
+
+/* Article body */
+.post-body { max-width: 46rem; margin-inline: auto; color: var(--ink-soft); font-size: 1.06rem; line-height: 1.8; }
+.post-body > * + * { margin-top: 1.25rem; }
+.post-body .post-lede {
+  font-family: var(--serif); font-size: clamp(1.35rem, 2.2vw, 1.6rem); line-height: 1.45;
+  color: var(--ink); padding-bottom: 1.8rem; border-bottom: 1px solid var(--line);
+}
+.post-body h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin-top: 2.8rem; }
+.post-body h3 { font-family: var(--sans); font-size: 1.08rem; font-weight: 600; margin-top: 2rem; color: var(--sage-deep); }
+.post-body h4 { font-size: 1rem; font-weight: 600; margin-top: 1.6rem; }
+.post-body h2 + *, .post-body h3 + *, .post-body h4 + * { margin-top: .8rem; }
+.post-body strong { color: var(--ink); font-weight: 600; }
+.post-body a:not(.btn) { color: var(--sage-deep); font-weight: 500; border-bottom: 1px solid var(--rose); transition: color .3s, border-color .3s; }
+.post-body a:not(.btn):hover { color: var(--sage); border-color: var(--sage); }
+.post-body ul, .post-body ol { padding-left: 0; display: grid; gap: .6rem; }
+.post-body ul li { position: relative; padding-left: 1.6rem; }
+.post-body ul li::before {
+  content: ""; position: absolute; left: .2rem; top: .78em;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--rose);
+}
+.post-body ol { list-style: none; counter-reset: post-ol; }
+.post-body ol li { counter-increment: post-ol; position: relative; padding-left: 2.4rem; }
+.post-body ol li::before {
+  content: counter(post-ol, decimal-leading-zero); position: absolute; left: 0; top: -.05em;
+  font-family: var(--serif); font-style: italic; font-size: 1.2rem; color: var(--rose-deep);
+}
+.post-body blockquote {
+  margin-block: 2.2rem; padding: 1.4rem 1.6rem; border-left: 3px solid var(--rose);
+  background: var(--paper); border-radius: 0 16px 16px 0;
+}
+.post-body blockquote p { font-family: var(--serif); font-style: italic; font-size: 1.4rem; line-height: 1.4; color: var(--sage-deep); }
+.post-body figure { margin-block: 2.2rem; }
+.post-body img { border-radius: 18px; width: 100%; }
+.post-body figcaption { font-size: .82rem; color: var(--ink-mute); margin-top: .6rem; text-align: center; }
+.post-body hr { border: 0; height: 1px; background: var(--line); margin-block: 2.6rem; }

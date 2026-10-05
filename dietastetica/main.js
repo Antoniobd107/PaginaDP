@@ -295,6 +295,30 @@
   }
 
   /* ---------------------------------------------------------
+     Blog category filter (blog.html)
+  --------------------------------------------------------- */
+  function initBlogFilter() {
+    var group = $("[data-blog-filters]");
+    var grid = $("[data-blog-grid]");
+    if (!group || !grid) return;
+    var chips = $$("[data-filter]", group);
+    var cards = $$("[data-category]", grid);
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        var cat = chip.getAttribute("data-filter");
+        chips.forEach(function (c) {
+          var on = c === chip;
+          c.classList.toggle("is-active", on);
+          c.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        cards.forEach(function (card) {
+          card.hidden = cat !== "all" && card.getAttribute("data-category") !== cat;
+        });
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------
      Boot
   --------------------------------------------------------- */
   function boot() {
@@ -307,6 +331,7 @@
     safe(initTilt, "initTilt");
     safe(initMagnetic, "initMagnetic");
     safe(initAmbientVideo, "initAmbientVideo");
+    safe(initBlogFilter, "initBlogFilter");
 
     if (window.gsap && window.ScrollTrigger) {
       try { gsap.registerPlugin(ScrollTrigger); } catch (e) {}
