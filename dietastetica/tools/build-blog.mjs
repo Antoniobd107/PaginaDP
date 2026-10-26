@@ -109,18 +109,33 @@ function inline(text, prefix) {
 function markdown(src, prefix) {
   const lines = src.replace(/\r\n/g, "\n").split("\n");
   const out = [];
-  let para = [], list = null, quote = [];
+  let para = [], list = null, quote = [], table = [];
 
   const flushPara = () => { if (para.length) { out.push(`<p>${inline(para.join(" "), prefix)}</p>`); para = []; } };
   const flushList = () => {
     if (list) { out.push(`<${list.tag}>` + list.items.map((i) => `<li>${inline(i, prefix)}</li>`).join("") + `</${list.tag}>`); list = null; }
   };
   const flushQuote = () => { if (quote.length) { out.push(`<blockquote><p>${inline(quote.join(" "), prefix)}</p></blockquote>`); quote = []; } };
-  const flushAll = () => { flushPara(); flushList(); flushQuote(); };
+  // Tabla: primera fila = cabecera, segunda = separador "| --- |"; la primera columna se marca como cabecera de fila.
+  const flushTable = () => {
+    if (!table.length) return;
+    const cells = (row) => row.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+    const rows = table.filter((r) => !/^\s*\|?\s*:?-{3,}/.test(r)).map(cells);
+    const [head, ...body] = rows;
+    out.push('<div class="post-table"><table>' +
+      `<thead><tr>${head.map((c) => `<th scope="col">${inline(c, prefix)}</th>`).join("")}</tr></thead>` +
+      `<tbody>${body.map((r) => "<tr>" + r.map((c, i) => i === 0
+        ? `<th scope="row">${inline(c, prefix)}</th>`
+        : `<td>${inline(c, prefix)}</td>`).join("") + "</tr>").join("")}</tbody></table></div>`);
+    table = [];
+  };
+  const flushAll = () => { flushPara(); flushList(); flushQuote(); flushTable(); };
 
   for (const line of lines) {
     let m;
     if (!line.trim()) { flushAll(); continue; }
+    if (/^\s*\|/.test(line)) { flushPara(); flushList(); flushQuote(); table.push(line); continue; }
+    flushTable();
     if ((m = line.match(/^(#{2,4})\s+(.*)$/))) {
       flushAll();
       const level = m[1].length;

@@ -704,3 +704,16 @@ em { font-style: italic; color: var(--sage); }
   background: var(--sage-mist); display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem;
 }
 .post-body .post-review p { flex: 1 1 18rem; font-size: .98rem; color: var(--sage-deep); }
+.post-body .post-table {
+  margin-block: 2rem; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line); border-radius: 18px; background: var(--paper);
+}
+.post-body table { width: 100%; min-width: 30rem; border-collapse: collapse; font-size: .95rem; line-height: 1.5; }
+.post-body th, .post-body td { padding: .85rem 1.1rem; text-align: left; vertical-align: top; }
+.post-body thead th {
+  background: var(--sage); color: var(--cream);
+  font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+}
+.post-body tbody tr + tr th, .post-body tbody tr + tr td { border-top: 1px solid var(--line-soft); }
+.post-body tbody th { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.post-body tbody tr:nth-child(even) { background: var(--cream); }
